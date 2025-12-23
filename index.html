@@ -19,25 +19,25 @@
                 return;
             }
 
-            // Créer un élément vCard
-            const vcard = `BEGIN:VCARD
-VERSION:3.0
-FN:${name}
-TEL;type=CELL:${phoneNumber.replace(/[^0-9+]/g, '')}
-END:VCARD`;
+            // Créer un lien pour ajouter le contact
+            const telNumber = phoneNumber.replace(/[^0-9+]/g, '');
+            const vcfData = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;type=CELL:${telNumber}\nEND:VCARD`;
             
-            // Créer un fichier vCard téléchargeable
-            const blob = new Blob([vcard], { type: 'text/vcard' });
+            // Créer un Blob avec les données vCard
+            const blob = new Blob([vcfData], { type: 'text/vcard' });
             const url = URL.createObjectURL(blob);
             
+            // Créer un lien de téléchargement
             const a = document.createElement('a');
             a.href = url;
             a.download = `${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.vcf`;
+            
+            // Ajouter le lien au document et déclencher le clic
             document.body.appendChild(a);
             a.click();
             
             // Nettoyer
-            window.setTimeout(() => {
+            setTimeout(() => {
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
             }, 100);
@@ -49,14 +49,20 @@ END:VCARD`;
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24" height="24">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
                 </svg>
-                Contact enregistré !
+                Ouvrir Contacts
             `;
             btn.style.backgroundColor = '#4CAF50';
             
+            // Rediriger vers l'application Contacts après un court délai
             setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.backgroundColor = '#000000';
-            }, 2000);
+                window.location.href = `tel:${telNumber},123#`; // Le ,123# permet d'ouvrir directement l'application Contacts sur certains appareils
+                
+                // Réinitialiser le bouton après la redirection
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.backgroundColor = '#000000';
+                }, 1000);
+            }, 500);
         });
     </script>
 </head>
