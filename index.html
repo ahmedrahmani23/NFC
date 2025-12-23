@@ -9,8 +9,8 @@
     <script src="script.js"></script>
     
     <script>
-        // Fonction pour enregistrer le contact
-        document.getElementById('save-contact-btn').addEventListener('click', async function() {
+        // Fonction pour ouvrir l'application Contacts avec les informations préremplies
+        document.getElementById('save-contact-btn').addEventListener('click', function() {
             const phoneNumber = (window.profileConfig?.socialLinks?.phone || '').trim();
             const name = window.profileConfig?.name || 'Contact';
             
@@ -19,62 +19,51 @@
                 return;
             }
 
+            // Formater le numéro de téléphone
             const telNumber = phoneNumber.replace(/[^0-9+]/g, '');
-            const vcfData = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;type=CELL:${telNumber}\nEND:VCARD`;
             
-            // Vérifier si l'API Web Share est disponible
-            if (navigator.share) {
-                try {
-                    // Créer un fichier vCard
-                    const blob = new Blob([vcfData], { type: 'text/vcard' });
-                    const file = new File([blob], `${name}.vcf`, { type: 'text/vcard' });
+            // Créer un lien mailto avec les paramètres de contact
+            const mailtoLink = `mailto:?subject=Nouveau contact&body=Nom: ${encodeURIComponent(name)}%0ATéléphone: ${encodeURIComponent(telNumber)}`;
+            
+            // Essayer d'ouvrir l'application Contacts
+            try {
+                // Pour iOS
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    // Créer un lien vCard temporaire
+                    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;type=CELL:${telNumber}\nEND:VCARD`;
+                    const blob = new Blob([vcard], { type: 'text/vcard' });
+                    const url = URL.createObjectURL(blob);
                     
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            title: `Ajouter ${name} aux contacts`,
-                            text: `Téléphone: ${telNumber}`,
-                            files: [file]
-                        });
-                        showSuccess(this);
-                    } else {
-                        // Fallback pour les navigateurs qui ne supportent pas le partage de fichiers
-                        downloadVCard(vcfData, name, this);
-                    }
-                } catch (err) {
-                    console.error('Erreur lors du partage:', err);
-                    downloadVCard(vcfData, name, this);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${name.replace(/[^a-z0-9]/gi, '_')}.vcf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                        // Essayer d'ouvrir l'application Contacts
+                        window.location.href = 'tel:,';
+                    }, 100);
+                } 
+                // Pour Android
+                else if (/Android/.test(navigator.userAgent)) {
+                    window.location.href = `tel:${telNumber},,123#`;
                 }
-            } else {
-                // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
-                downloadVCard(vcfData, name, this);
+                // Pour les autres appareils
+                else {
+                    window.location.href = mailtoLink;
+                }
+                
+                // Afficher le message de succès
+                showSuccess(this);
+            } catch (error) {
+                console.error('Erreur:', error);
+                // Fallback : ouvrir le lien mailto
+                window.location.href = mailtoLink;
             }
         });
-
-        // Fonction pour télécharger la vCard
-        function downloadVCard(vcfData, name, button) {
-            const blob = new Blob([vcfData], { type: 'text/vcard' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.vcf`;
-            
-            document.body.appendChild(a);
-            a.click();
-            
-            setTimeout(() => {
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-                showSuccess(button);
-                
-                // Essayer d'ouvrir l'application Contacts sur iOS
-                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                    setTimeout(() => {
-                        window.location.href = 'tel:,'; // Ouvre l'application Téléphone
-                    }, 500);
-                }
-            }, 100);
-        }
         
         // Fonction pour afficher le message de succès
         function showSuccess(button) {
@@ -83,7 +72,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24" height="24">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
                 </svg>
-                Contact enregistré !
+                Ouvrir Contacts...
             `;
             button.style.backgroundColor = '#4CAF50';
             
