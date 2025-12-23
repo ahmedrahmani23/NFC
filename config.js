@@ -4,11 +4,9 @@ const profileConfig = {
     // Informations de base
 
 
-    name: "MARSA BLANCA",
-    jobTitle: "Développeuse Web",
-    bio: "Découvrez l'authenticité des saveurs méditerranéennes au cœur de votre ville. Notre restaurant vous propose une cuisine raffinée préparée avec des ingrédients frais et locaux. Un voyage culinaire qui éveillera vos papilles !",
-    address: "Adresse complète du client",
-    profileImage: "https://i.ibb.co/mFXPvSJM/marsablanca.jpg",
+    name: "COCA",
+    bio: "SALAM",
+    profileImage: "https://i.ibb.co/NgKMhgMT/cocacola.jpg",
     
 
 
@@ -17,16 +15,16 @@ const profileConfig = {
 
     // Réseaux sociaux
     socialLinks: {
-        facebook: "daisyparkhouse",
-        instagram: "daisyparkhouse",
-        tiktok: "daisyparkhouse",
-        whatsapp: "+1234567890",
-        telegram: "daisyparkhouse",
+        facebook: "https://www.facebook.com/share/16dysjBQvt/?mibextid=wwXIfr",
+        instagram: "https://www.instagram.com/riyadmahrez26.7?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+        tiktok: "https://www.tiktok.com/@chebkhaled?is_from_webapp=1&sender_device=pc",
+        whatsapp: "+213540253369",
+        telegram: "+213 562 33 14 08",
         linkedin: "daisyparkhouse",
-        snapchat: "nomdutilisateur",
-        email: "contact@example.com",
-        website: "https://mon-site.com",
-        maps: "https://maps.app.goo.gl/example",
+        snapchat: "https://www.snapchat.com/@sheikh_tidiane?sender_web_id=792b2a4d-05d3-4e8f-a5e0-1aeb89eba722&device_type=desktop&is_copy_url=true",
+        email: "pubcom.alger@gmail.com",
+        website: "https://www.youtube.com/",
+        maps: "https://share.google/T1z7NAFbftnLYNKZy",
         phone: "+213658546209"
     },
     
@@ -43,12 +41,12 @@ const profileConfig = {
         tiktok: true,        // Afficher TikTok
         whatsapp: true,      // Afficher WhatsApp
         telegram: true,      // Afficher Telegram
-        linkedin: true,     // Afficher LinkedIn (mettre true pour l'activer)
-        website: true,       // Afficher Site Web
+        linkedin: false,     // Afficher LinkedIn (mettre true pour l'activer)
+        website: false,       // Afficher Site Web
         maps: true,          // Afficher Maps
         phone: true,         // Afficher Téléphone
         snapchat: true,      // Afficher Snapchat
-        email: true          // Afficher Email
+        email: true,         // Afficher Email
     },
     
 };

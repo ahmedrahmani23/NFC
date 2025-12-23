@@ -7,22 +7,95 @@
         <link rel="stylesheet" href="style.css">
     <script src="config.js"></script>
     <script src="script.js"></script>
+    
+    <script>
+        // Fonction pour enregistrer le contact
+        document.getElementById('save-contact-btn').addEventListener('click', function() {
+            const phoneNumber = (window.profileConfig?.socialLinks?.phone || '').trim();
+            const name = window.profileConfig?.name || 'Contact';
+            
+            if (!phoneNumber) {
+                alert('Aucun numéro de téléphone trouvé');
+                return;
+            }
+
+            // Créer un élément vCard
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${name}
+TEL;type=CELL:${phoneNumber.replace(/[^0-9+]/g, '')}
+END:VCARD`;
+            
+            // Créer un fichier vCard téléchargeable
+            const blob = new Blob([vcard], { type: 'text/vcard' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.vcf`;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Nettoyer
+            window.setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 100);
+            
+            // Afficher un message de confirmation
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24" height="24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+                Contact enregistré !
+            `;
+            btn.style.backgroundColor = '#4CAF50';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.backgroundColor = '#000000';
+            }, 2000);
+        });
+    </script>
 </head>
 <body>
     <div class="container">
         <div class="profile-image">
-            <img src="https://toxicfreefuture.org/wp-content/uploads/2021/01/AdobeStock_279207035_Editorial_Use_Only-scaled.jpeg" alt="Daisy Parkhouse" id="profile-pic">
+            <img src="" alt="" id="profile-pic">
         </div>
         
-        <p class="bio-text" id="bio-text">Testing to see how fast I could give my info if Michael Myers was chasing me</p>
+        <p class="bio-text" id="bio-text"></p>
         <h1 id="profile-name">Daisy Parkhouse</h1>
+        <!-- Bouton Enregistrer le contact -->
+        <div class="save-contact-container">
+            <button id="save-contact-btn" class="save-contact-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24" height="24">
+                    <path d="M19 3h-1.5v1.5h-15V3H1v4.5h1.5V4.5h15V15H9v1.5h10.5V3z"/>
+                    <path d="M4.5 6H6v10.5c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5V6h1.5v10.5c0 1.66-1.34 3-3 3h-9c-1.66 0-3-1.34-3-3V6z"/>
+                </svg>
+                Enregistrer le contact
+            </button>
+        </div>
 
         <div class="social-grid">
             <div class="icon-wrapper">
-                <a href="https://facebook.com/daisyparkhouse" class="social-icon facebook" id="facebook-link" target="_blank">
-                    <svg viewBox="0 0 24 24" fill="white">
-                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                    </svg>
+                <a href="" class="social-icon facebook" id="facebook-link" target="_blank">
+                    <svg xmlns="http://www.w3.org/2000/svg" 
+             shape-rendering="geometricPrecision" 
+             text-rendering="geometricPrecision" 
+             image-rendering="optimizeQuality" 
+             fill-rule="evenodd" 
+             clip-rule="evenodd" 
+             viewBox="0 0 509 509"
+             aria-hidden="true">
+            <g fill-rule="nonzero">
+                <path fill="#0866FF" d="M509 254.5C509 113.94 395.06 0 254.5 0S0 113.94 0 254.5C0 373.86 82.17 474 193.02 501.51V332.27h-52.48V254.5h52.48v-33.51c0-86.63 39.2-126.78 124.24-126.78 16.13 0 43.95 3.17 55.33 6.33v70.5c-6.01-.63-16.44-.95-29.4-.95-41.73 0-57.86 15.81-57.86 56.91v27.5h83.13l-14.28 77.77h-68.85v174.87C411.35 491.92 509 384.62 509 254.5z"/>
+                <path fill="#fff" d="M354.18 332.27l14.28-77.77h-83.13V227c0-41.1 16.13-56.91 57.86-56.91 12.96 0 23.39.32 29.4.95v-70.5c-11.38-3.16-39.2-6.33-55.33-6.33-85.04 0-124.24 40.16-124.24 126.78v33.51h-52.48v77.77h52.48v169.24c19.69 4.88 40.28 7.49 61.48 7.49 10.44 0 20.72-.64 30.83-1.86V332.27h68.85z"/>
+            </g>
+        </svg>
+
                 </a>
                 <span class="icon-label">Facebook</span>
             </div>
@@ -56,9 +129,20 @@
 
             <div class="icon-wrapper">
                 <a href="https://tiktok.com/@daisyparkhouse" class="social-icon tiktok" id="tiktok-link" target="_blank">
-                    <svg viewBox="0 0 24 24" fill="white">
-                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" 
+             shape-rendering="geometricPrecision" 
+             text-rendering="geometricPrecision" 
+             image-rendering="optimizeQuality" 
+             fill-rule="evenodd" 
+             clip-rule="evenodd" 
+             viewBox="0 0 461 512.235"
+             aria-hidden="true">
+            <g fill-rule="nonzero">
+                <path fill="#2DCCD3" d="M370.934 98.964c19.378 19.981 43.543 32.158 67.898 37.7v-15.005c-22.884-1.621-46.823-8.822-67.898-22.695zM230.952 0v335.533c0 43.959-31.593 72.234-70.009 72.234-12.743 0-24.844-2.978-35.363-8.483 13.346 17.041 34.421 26.843 57.531 26.843 38.417 0 70.01-28.275 70.01-72.272V18.322h60.886C312.348 12.479 310.99 6.371 309.934 0h-78.982zM181 195.062v-16.627c-7.691-1.281-15.382-1.696-21.753-1.696C72.573 176.739 0 246.296 0 332.555c0 56.626 27.559 105.033 69.444 133.685-29.18-28.953-47.276-69.481-47.276-115.362 0-86.109 72.347-155.628 158.832-155.816z"/>
+                <path fill="#F1204A" d="M318.87 329.991c0 107.144-81.96 163.921-159.209 163.921-33.44 0-64.505-10.103-90.217-27.672 28.879 28.652 68.616 45.995 112.385 45.995 77.248 0 159.208-56.777 159.208-163.921V173.723c-7.69-5.203-15.08-11.272-22.167-18.36v174.628zm-193.289 69.294c-9.426-11.914-15.043-27.334-15.043-45.43 0-50.782 39.698-77.624 92.629-72.045v-85.052c-7.69-1.282-15.381-1.697-21.79-1.697H181v68.389c-52.931-5.542-92.63 21.263-92.63 72.083 0 29.707 15.193 52.252 37.211 63.752zm313.251-262.621v63.525c-35.174 0-68.464-6.711-97.795-26.466 34.157 34.157 75.59 44.826 119.963 44.826v-78.567a137.713 137.713 0 01-22.168-3.318zm-67.898-37.701c-18.737-19.265-33.026-45.806-38.832-80.641h-18.095c10.329 37.663 31.592 63.94 56.927 80.641z"/>
+                <path d="M159.661 493.912c77.248 0 159.209-56.777 159.209-163.921V155.364c7.088 7.087 14.477 13.157 22.168 18.359 29.33 19.755 62.62 26.466 97.794 26.466v-63.525c-24.354-5.542-48.52-17.72-67.898-37.7-25.335-16.702-46.597-42.979-56.928-80.641H253.12v335.533c0 43.996-31.593 72.271-70.009 72.271-23.111 0-44.185-9.801-57.531-26.842-22.017-11.499-37.21-34.044-37.21-63.751 0-50.821 39.698-77.626 92.63-72.084v-68.388c-86.485.189-158.832 69.708-158.832 155.815 0 45.882 18.096 86.409 47.277 115.363 25.711 17.569 56.776 27.672 90.216 27.672z"/>
+            </g>
+        </svg>
                 </a>
                 <span class="icon-label">TikTok</span>
             </div>
@@ -109,9 +193,10 @@
                 <span class="icon-label">Localisation</span>
             </div>
 
-            <div class="icon-wrapper">
+            <div class="icon-wrapper" id="snapchat-wrapper">
                 <a href="https://snapchat.com/add/daisyparkhouse"
        class="social-icon snapchat"
+       id="snapchat-link"
        target="_blank">
         <svg class="snap-icon"
              xmlns="http://www.w3.org/2000/svg"
@@ -135,7 +220,6 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <p id="modalText" style="margin-bottom: 10px; font-size: 18px; font-weight: 600;"></p>
             <a href="#" id="modalLink" target="_blank" class="modal-link">Ouvrir</a>
-            <button id="copyBtn" class="copy-btn" onclick="copyToClipboard()">Copier</button>
         </div>
     </div>
 
@@ -167,7 +251,11 @@
             if (socialLinks.facebook) {
                 const fbLink = document.getElementById('facebook-link');
                 if (fbLink) {
-                    fbLink.href = `https://facebook.com/${socialLinks.facebook}`;
+                    // Utiliser directement le lien complet fourni dans la configuration
+                    fbLink.href = socialLinks.facebook.startsWith('http') ? 
+                        socialLinks.facebook : 
+                        `https://facebook.com/${socialLinks.facebook}`;
+                    
                     // Masquer si désactivé
                     if (config.enabledIcons && !config.enabledIcons.facebook) {
                         fbLink.parentElement.style.display = 'none';
@@ -179,7 +267,11 @@
             if (socialLinks.instagram) {
                 const igLink = document.getElementById('instagram-link');
                 if (igLink) {
-                    igLink.href = `https://instagram.com/${socialLinks.instagram}`;
+                    // Utiliser directement le lien complet fourni dans la configuration
+                    igLink.href = socialLinks.instagram.startsWith('http') ? 
+                        socialLinks.instagram : 
+                        `https://instagram.com/${socialLinks.instagram}`;
+                        
                     if (config.enabledIcons && !config.enabledIcons.instagram) {
                         igLink.parentElement.style.display = 'none';
                     }
@@ -190,7 +282,11 @@
             if (socialLinks.tiktok) {
                 const tiktokLink = document.getElementById('tiktok-link');
                 if (tiktokLink) {
-                    tiktokLink.href = `https://tiktok.com/@${socialLinks.tiktok}`;
+                    // Utiliser directement le lien complet fourni dans la configuration
+                    tiktokLink.href = socialLinks.tiktok.startsWith('http') ? 
+                        socialLinks.tiktok : 
+                        `https://tiktok.com/@${socialLinks.tiktok}`;
+                        
                     if (config.enabledIcons && !config.enabledIcons.tiktok) {
                         tiktokLink.parentElement.style.display = 'none';
                     }
@@ -212,7 +308,8 @@
             if (socialLinks.telegram) {
                 const tgLink = document.getElementById('telegram-link');
                 if (tgLink) {
-                    tgLink.href = `https://t.me/${socialLinks.telegram}`;
+                    // Utiliser le numéro de téléphone pour le lien Telegram, similaire à WhatsApp
+                    tgLink.href = `https://t.me/+${socialLinks.telegram.replace(/[^0-9]/g, '')}`;
                     if (config.enabledIcons && !config.enabledIcons.telegram) {
                         tgLink.parentElement.style.display = 'none';
                     }
@@ -269,6 +366,20 @@
                 }
             }
             
+            // Snapchat
+            if (socialLinks.snapchat) {
+                const snapchatLink = document.getElementById('snapchat-link');
+                const snapchatWrapper = document.getElementById('snapchat-wrapper');
+                if (snapchatLink && snapchatWrapper) {
+                    // Utiliser directement l'URL complète fournie dans la configuration
+                    snapchatLink.href = socialLinks.snapchat;
+                    // Masquer si désactivé
+                    if (config.enabledIcons && config.enabledIcons.snapchat === false) {
+                        snapchatWrapper.style.display = 'none';
+                    }
+                }
+            }
+            
             // Appliquer le thème si défini
             if (config.theme) {
                 const root = document.documentElement;
@@ -288,4 +399,7 @@
         });
     </script>
 </body>
+    
 </html>
+
+
