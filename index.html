@@ -10,7 +10,7 @@
     
     <script>
         // Fonction pour enregistrer le contact
-        document.getElementById('save-contact-btn').addEventListener('click', function() {
+        document.getElementById('save-contact-btn').addEventListener('click', async function() {
             const phoneNumber = (window.profileConfig?.socialLinks?.phone || '').trim();
             const name = window.profileConfig?.name || 'Contact';
             
@@ -19,51 +19,79 @@
                 return;
             }
 
-            // Créer un lien pour ajouter le contact
             const telNumber = phoneNumber.replace(/[^0-9+]/g, '');
             const vcfData = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;type=CELL:${telNumber}\nEND:VCARD`;
             
-            // Créer un Blob avec les données vCard
+            // Vérifier si l'API Web Share est disponible
+            if (navigator.share) {
+                try {
+                    // Créer un fichier vCard
+                    const blob = new Blob([vcfData], { type: 'text/vcard' });
+                    const file = new File([blob], `${name}.vcf`, { type: 'text/vcard' });
+                    
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            title: `Ajouter ${name} aux contacts`,
+                            text: `Téléphone: ${telNumber}`,
+                            files: [file]
+                        });
+                        showSuccess(this);
+                    } else {
+                        // Fallback pour les navigateurs qui ne supportent pas le partage de fichiers
+                        downloadVCard(vcfData, name, this);
+                    }
+                } catch (err) {
+                    console.error('Erreur lors du partage:', err);
+                    downloadVCard(vcfData, name, this);
+                }
+            } else {
+                // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
+                downloadVCard(vcfData, name, this);
+            }
+        });
+
+        // Fonction pour télécharger la vCard
+        function downloadVCard(vcfData, name, button) {
             const blob = new Blob([vcfData], { type: 'text/vcard' });
             const url = URL.createObjectURL(blob);
             
-            // Créer un lien de téléchargement
             const a = document.createElement('a');
             a.href = url;
             a.download = `${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.vcf`;
             
-            // Ajouter le lien au document et déclencher le clic
             document.body.appendChild(a);
             a.click();
             
-            // Nettoyer
             setTimeout(() => {
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
+                showSuccess(button);
+                
+                // Essayer d'ouvrir l'application Contacts sur iOS
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    setTimeout(() => {
+                        window.location.href = 'tel:,'; // Ouvre l'application Téléphone
+                    }, 500);
+                }
             }, 100);
-            
-            // Afficher un message de confirmation
-            const btn = this;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `
+        }
+        
+        // Fonction pour afficher le message de succès
+        function showSuccess(button) {
+            const originalText = button.innerHTML;
+            button.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24" height="24">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
                 </svg>
-                Ouvrir Contacts
+                Contact enregistré !
             `;
-            btn.style.backgroundColor = '#4CAF50';
+            button.style.backgroundColor = '#4CAF50';
             
-            // Rediriger vers l'application Contacts après un court délai
             setTimeout(() => {
-                window.location.href = `tel:${telNumber},123#`; // Le ,123# permet d'ouvrir directement l'application Contacts sur certains appareils
-                
-                // Réinitialiser le bouton après la redirection
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.style.backgroundColor = '#000000';
-                }, 1000);
-            }, 500);
-        });
+                button.innerHTML = originalText;
+                button.style.backgroundColor = '#000000';
+            }, 3000);
+        }
     </script>
 </head>
 <body>
