@@ -4,9 +4,9 @@ const profileConfig = {
     // Informations de base
 
 
-    name: "COCA",
-    bio: "SALAM",
-    profileImage: "https://i.ibb.co/NgKMhgMT/cocacola.jpg",
+    name: "PRESTIVA LIMO",
+    bio: "The best limousine transportation from Montréal",
+    profileImage: "https://i.ibb.co/3yMpY6bR/logo.jpg",
     
 
 
@@ -43,9 +43,9 @@ const profileConfig = {
         telegram: true,      // Afficher Telegram
         linkedin: false,     // Afficher LinkedIn (mettre true pour l'activer)
         website: false,       // Afficher Site Web
-        maps: true,          // Afficher Maps
+        maps: false,          // Afficher Maps
         phone: true,         // Afficher Téléphone
-        snapchat: true,      // Afficher Snapchat
+        snapchat: false,      // Afficher Snapchat
         email: true,         // Afficher Email
     },
     
